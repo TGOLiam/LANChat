@@ -25,7 +25,7 @@ compile: $(BIN_DIR)
 
 # Create manifest specifying the main entry point
 $(MANIFEST): | $(BIN_DIR)
-	echo "Main-Class: app.ChatAppT" > $(MANIFEST)
+	echo "Main-Class: app.ChatApp" > $(MANIFEST)
 	echo "" >> $(MANIFEST)
 
 # Package compiled files into a runnable JAR

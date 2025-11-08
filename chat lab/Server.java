@@ -23,7 +23,7 @@ public class Server extends Chat{
             send(local_name);
             peer_name = receive();
 
-            // initialize logs
+            // initialize message history
             initialize_logs();
 
             // Notify connection
@@ -34,6 +34,7 @@ public class Server extends Chat{
             System.err.println("Session terminated: " + e.getMessage());
         }
     }
+
     @Override
     public void run_session(){
         try{

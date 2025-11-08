@@ -1,20 +1,22 @@
 package core;
 import java.io.*;
-import java.net.*;
+import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.*;
 import java.time.LocalDateTime; // Import the LocalDateTime class
 import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 
 public abstract class Chat{
     protected Socket socket = null;            // Socket for networking
-    protected Deque<Message> msg_history = null;      // For easy deletion/addition
+    protected Deque<Message> msg_history = new ArrayDeque<>();     // For easy deletion/addition
 
     // Input/Output Streams
     protected DataInputStream socket_in = null;            
     protected DataOutputStream socket_out = null;          
     protected BufferedWriter writer = null;
     protected BufferedReader reader = null;
-    protected Scanner sc = null;
+    protected Scanner sc = new Scanner(System.in);
 
     // Usernames
     protected String local_name = null;
@@ -27,13 +29,6 @@ public abstract class Chat{
     // methods to be implemented by subclasses
     public abstract void run_session();
     public abstract void exit_session();
-
-    // Initialize deque and scanner
-    Chat()
-    {
-        msg_history = new ArrayDeque<>();
-        sc = new Scanner(System.in);
-    }
 
     // initialization methods
     protected void initialize_logs() throws Exception 
@@ -86,6 +81,7 @@ public abstract class Chat{
             throw new Exception("Cant write to socket. ");
         }
     }
+
     protected String receive() throws Exception
     {
         try{
@@ -105,6 +101,7 @@ public abstract class Chat{
             throw new Exception("Cant read from socket. ");
         }
     }
+
     protected void log_message(Message m) throws Exception         // Save message into file
     {
         try {
@@ -115,6 +112,7 @@ public abstract class Chat{
             throw new Exception("Cant write to file.");
         }
     }
+
     protected void push_message(Message m) throws Exception             // Load message into msg history
     {
         try{
@@ -130,6 +128,15 @@ public abstract class Chat{
             throw new Exception("Cant save to history.");
         }
     }
+
+    protected void display_msg_history()
+    {
+        for (Message m : msg_history) {
+            System.out.printf("[%s] %s\n", m.user, m.message);
+        }
+    }
+
+    // Utility methods
     protected String get_input() throws Exception
     {
         System.out.flush();
@@ -152,19 +159,14 @@ public abstract class Chat{
             return input;
         }
     }
-    // Utility methods
-    protected void display_msg_history()
-    {
-        for (Message m : msg_history) {
-            System.out.printf("[%s] %s\n", m.user, m.message);
-        }
-    }
+
     protected String get_timestamp() {
         LocalDateTime t = LocalDateTime.now();
         // Format: YYYY-MM-DD HH:MM:SS
         DateTimeFormatter formatted_t = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return t.format(formatted_t);
     }
+
     protected void clear_output()
     {
         System.out.print("\033[K\033c");
