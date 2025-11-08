@@ -1,4 +1,6 @@
-# Makefile for Chat Application
+# ===============================
+# Makefile for Half-Duplex Chat App
+# ===============================
 
 # Directories
 SRC_DIR = src
@@ -11,36 +13,70 @@ MANIFEST = $(BIN_DIR)/manifest.txt
 # Java tools
 JAVAC = javac
 JAR = jar
+JAVA = java
 
+# Target Java version for compatibility
+RELEASE = 11
+
+# ===============================
 # Default target
+# ===============================
 all: $(JAR_FILE)
 
-# Create bin directory if not existing
+# Ensure bin directory exists
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
-# Compile Java sources into bin/
+# ===============================
+# Compile Java source files
+# ===============================
 compile: $(BIN_DIR)
-	$(JAVAC) -d $(BIN_DIR) $(CORE_SRC)/*.java $(APP_SRC)/*.java
+	@echo "Compiling Java sources (target release $(RELEASE))..."
+	$(JAVAC) --release $(RELEASE) -d $(BIN_DIR) $(CORE_SRC)/*.java $(APP_SRC)/*.java
 
-# Create manifest specifying the main entry point
+# ===============================
+# Create manifest file
+# ===============================
 $(MANIFEST): | $(BIN_DIR)
-	echo "Main-Class: app.ChatApp" > $(MANIFEST)
-	echo "" >> $(MANIFEST)
+	@echo "Creating manifest..."
+	@echo "Main-Class: app.ChatApp" > $(MANIFEST)
+	@echo "" >> $(MANIFEST)
 
-# Package compiled files into a runnable JAR
+# ===============================
+# Build JAR package
+# ===============================
 $(JAR_FILE): compile $(MANIFEST)
+	@echo "Packaging JAR..."
 	cd $(BIN_DIR) && $(JAR) cfm ../$(JAR_FILE) manifest.txt app core
+	@echo "Build complete: $(JAR_FILE)"
 
-# Remove compiled files and jar
-clean:
-	rm -rf $(BIN_DIR) $(JAR_FILE)
+# ===============================
+# Run options
+# ===============================
+run:
+	$(JAVA) -jar $(JAR_FILE)
 
-# Run targets (examples)
 server:
-	java -cp $(BIN_DIR) app.ChatAppT -s Liam_Server
+	$(JAVA) -cp $(BIN_DIR) app.ChatApp -s Liam_Server
 
 client:
-	java -cp $(BIN_DIR) app.ChatAppT -c Liam_Client 127.0.0.1
+	$(JAVA) -cp $(BIN_DIR) app.ChatApp -c Liam_Client 127.0.0.1
 
-# Bui
+# ===============================
+# Cleanup
+# ===============================
+clean:
+	rm -rf $(BIN_DIR) $(JAR_FILE)
+	@echo "Cleaned build artifacts."
+
+# ===============================
+# Help
+# ===============================
+help:
+	@echo "Usage:"
+	@echo "  make              -> Build the JAR"
+	@echo "  make run          -> Run the application"
+	@echo "  make server       -> Run in server mode"
+	@echo "  make client       -> Run in client mode"
+	@echo "  make clean        -> Remove compiled files"
+	@echo "  make help         -> Show this help message"
