@@ -7,7 +7,8 @@ import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 
 public abstract class Chat{
     protected Socket socket = null;            // Socket for networking
-    protected Deque<Message> msg_history = new ArrayDeque<>();;      // For easy deletion/addition
+    protected ServerSocket server = null;
+    protected Deque<Message> msg_history = new ArrayDeque<>();      // For easy deletion/addition
 
     // Input/Output Streams
     protected DataInputStream socket_in = null;            
@@ -25,15 +26,13 @@ public abstract class Chat{
     protected final int SOCKET_TIMEOUT_MS = 60_000;
 
     // methods to be implemented by subclasses
-    public abstract void start();
+    public abstract void start() throws Exception;
 
     // initialization methods
     protected void initialize_logs() throws Exception 
     {
         try {
-            File log_folder = new File("logs");
-            if (!log_folder.exists()) 
-                log_folder.mkdirs(); // create the directory if missing
+            new File("logs").mkdirs(); // Creates directory if it doesn't exist
             
             // Set up log files
             String filename = "logs/" + local_name + "_" + peer_name + ".txt";
@@ -63,11 +62,8 @@ public abstract class Chat{
             socket_out.writeUTF(buffer);
             socket_out.flush();
         }
-        catch (SocketException e) {
-            throw new Exception("Connection disconnected. ");
-        } 
-        catch (EOFException e) {
-            throw new Exception("Connection closed. ");
+        catch (EOFException | SocketException e) {
+            throw new Exception("Connection lost. ");
         } 
         catch (SocketTimeoutException e)
         {
@@ -82,11 +78,8 @@ public abstract class Chat{
         try{
             return socket_in.readUTF();
         }
-        catch (SocketException e) {
-            throw new Exception("Connection disconnected. ");
-        } 
-        catch (EOFException e) {
-            throw new Exception("Connection closed. ");
+        catch (EOFException | SocketException e) {
+            throw new Exception("Connection lost. ");
         } 
         catch (SocketTimeoutException e)
         {
@@ -109,37 +102,47 @@ public abstract class Chat{
     {
         msg_history.addLast(m);                     // add to deque
         if (msg_history.size() > MAX_RECENT_MSG)        // if size > 10
-        {
-            Message last_msg = msg_history.removeFirst();   // get last message
-            log_message(last_msg);                          // save to file 
-        }
+            log_message(msg_history.removeFirst());                          // save to file 
+        
     }
     protected String get_input() throws Exception
     {
         System.out.flush();
         System.out.print("Enter message >> ");
-        String input;
-        while (true)
-        {
-            input = sc.nextLine();
-            if (input.equals("/exit")) 
-                throw new Exception("User Exited"); 
-            System.out.println("Waiting for reply...");
-            return input;
-        }
+        String input = sc.nextLine();
+        if (input.equals("/exit")) 
+            throw new Exception("User Exited"); 
+        return input;
     }
     // Utility methods
     protected void display_msg_history()
     {
+        System.out.println("Connected to " + peer_name + " at "+ socket.getInetAddress());
         for (Message m : msg_history) 
             System.out.printf("[%s] %s\n", m.user, m.message);
     }
     protected String get_timestamp() {
-        DateTimeFormatter formatted_t = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return LocalDateTime.now().format(formatted_t);
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return LocalDateTime.now().format(f);
     }
     protected void clear_terminal() {
         System.out.print("\033[K\033c");
         System.out.flush();
+    }
+
+    public void terminate() {
+        try {
+            // Log remaining messages from history
+            for (Message message : msg_history) 
+                log_message(message);
+            
+            // Close all resources
+            if (socket != null) socket.close();
+            if (server != null) server.close();
+            if (writer != null) writer.close();
+            if (reader != null) reader.close();
+        } catch (Exception e) {
+            System.err.println("Error during cleanup: " + e.getMessage());
+        }
     }
 }

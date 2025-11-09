@@ -23,8 +23,18 @@ public class ChatApp {
                 case 1:
                     System.out.print("Enter username: ");
                     String serverUser = sc.nextLine();
-                    Server server = new Server(serverUser, PORT);
-                    server.start();
+                    Server server = null;
+
+                    try {
+                        server = new Server(serverUser, PORT);
+                        server.start();
+                    } catch (Exception e) {
+                        System.err.println("Session terminated: " + e.getMessage());
+                    }
+                    finally{
+                        if (server != null) server.terminate();
+                    }
+
                     break;
 
                 case 2:
@@ -34,10 +44,19 @@ public class ChatApp {
                     System.out.print("Enter IP address: ");
                     String ip = sc.nextLine();
 
-                    Client client = new Client(clientUser, ip, PORT);
-                    client.start();
-                    break;
+                    Client client = null;
+                    try{
+                        client = new Client(clientUser, ip, PORT);
+                        client.start();
+                    }
+                    catch (Exception e){
+                        System.err.println("Session terminated: " + e.getMessage());
+                    }
+                    finally{
+                        if (client != null) client.terminate();
+                    }
 
+                    break;
                 case 0:
                     System.out.println("Exiting Chat App...");
                     sc.close();
