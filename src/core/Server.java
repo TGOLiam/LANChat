@@ -35,7 +35,7 @@ public class Server extends Chat{
         }
     }
     @Override
-    public void run_session(){
+    public void start(){
         try{
             System.out.println("Waiting for response...");
             while (true) {
@@ -55,27 +55,23 @@ public class Server extends Chat{
         }
         catch (Exception e) {
             System.err.println("Session terminated: " + e.getMessage());
-            exit_session();
         }
-    }
+        finally{
+            try{
+                // Log messages
+                for (Message message : msg_history) {
+                    log_message(message);
+                }
 
-    @Override
-    public void exit_session()
-    {
-        try{
-            // Log messages
-            for (Message message : msg_history) {
-                log_message(message);
+                socket.close();
+                server.close();;
+                sc.close();
+                writer.close();
+                reader.close();
             }
-
-            socket.close();
-            server.close();;
-            sc.close();
-            writer.close();
-            reader.close();
-        }
-        catch (Exception e){
-            System.err.println("Session cant exit properly: " + e.getMessage());
+            catch (Exception e){
+                System.err.println("Session cant exit properly: " + e.getMessage());
+            }
         }
     }
 }

@@ -7,14 +7,14 @@ import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 
 public abstract class Chat{
     protected Socket socket = null;            // Socket for networking
-    protected Deque<Message> msg_history = null;      // For easy deletion/addition
+    protected Deque<Message> msg_history = new ArrayDeque<>();;      // For easy deletion/addition
 
     // Input/Output Streams
     protected DataInputStream socket_in = null;            
     protected DataOutputStream socket_out = null;          
     protected BufferedWriter writer = null;
     protected BufferedReader reader = null;
-    protected Scanner sc = null;
+    protected Scanner sc = new Scanner(System.in);
 
     // Usernames
     protected String local_name = null;
@@ -25,25 +25,16 @@ public abstract class Chat{
     protected final int SOCKET_TIMEOUT_MS = 60_000;
 
     // methods to be implemented by subclasses
-    public abstract void run_session();
-    public abstract void exit_session();
-
-    // Initialize deque and scanner
-    Chat()
-    {
-        msg_history = new ArrayDeque<>();
-        sc = new Scanner(System.in);
-    }
+    public abstract void start();
 
     // initialization methods
     protected void initialize_logs() throws Exception 
     {
         try {
             File log_folder = new File("logs");
-            if (!log_folder.exists()) {
+            if (!log_folder.exists()) 
                 log_folder.mkdirs(); // create the directory if missing
-            }
-
+            
             // Set up log files
             String filename = "logs/" + local_name + "_" + peer_name + ".txt";
             writer = new BufferedWriter(new FileWriter(filename, true)); // append mode
@@ -108,8 +99,7 @@ public abstract class Chat{
     protected void log_message(Message m) throws Exception         // Save message into file
     {
         try {
-            String formatted = String.format("[%s] %s: %s\n", m.timestamp, m.user, m.message);
-            writer.write(formatted);
+            writer.write(String.format("[%s] %s: %s\n", m.timestamp, m.user, m.message));
             writer.flush(); 
         } catch (IOException e) {
             throw new Exception("Cant write to file.");
@@ -117,17 +107,11 @@ public abstract class Chat{
     }
     protected void push_message(Message m) throws Exception             // Load message into msg history
     {
-        try{
-            msg_history.addLast(m);                     // add to deque
-            if (msg_history.size() > MAX_RECENT_MSG)        // if size > 10
-            {
-                Message last_msg = msg_history.removeFirst();   // get last message
-                log_message(last_msg);                          // save to file 
-            }
-        }
-        catch (Exception e)
+        msg_history.addLast(m);                     // add to deque
+        if (msg_history.size() > MAX_RECENT_MSG)        // if size > 10
         {
-            throw new Exception("Cant save to history.");
+            Message last_msg = msg_history.removeFirst();   // get last message
+            log_message(last_msg);                          // save to file 
         }
     }
     protected String get_input() throws Exception
@@ -138,16 +122,8 @@ public abstract class Chat{
         while (true)
         {
             input = sc.nextLine();
-            if (input.startsWith("/"))
-            {
-                switch (input) {
-                    case "/exit":
-                        throw new Exception("Exited");
-                    default:
-                        System.out.println("Unknown command: " + input);
-                        continue;
-                }
-            }
+            if (input.equals("/exit")) 
+                throw new Exception("User Exited"); 
             System.out.println("Waiting for reply...");
             return input;
         }
@@ -155,18 +131,15 @@ public abstract class Chat{
     // Utility methods
     protected void display_msg_history()
     {
-        for (Message m : msg_history) {
+        for (Message m : msg_history) 
             System.out.printf("[%s] %s\n", m.user, m.message);
-        }
     }
     protected String get_timestamp() {
-        LocalDateTime t = LocalDateTime.now();
-        // Format: YYYY-MM-DD HH:MM:SS
         DateTimeFormatter formatted_t = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return t.format(formatted_t);
+        return LocalDateTime.now().format(formatted_t);
     }
     protected void clear_terminal() {
-        System.out.print("\033[H\033[2J");
+        System.out.print("\033[K\033c");
         System.out.flush();
     }
 }

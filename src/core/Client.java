@@ -40,19 +40,15 @@ public class Client extends Chat{
     }
 
     @Override
-    public void run_session(){
+    public void start(){
         try{
             while (true) {
-                // Sending input to server, format, then save
-                String input = get_input();     // read input from stdin
-                send(input);                        // read input from socket
-                Message sent_msg = new Message(get_timestamp(), local_name, input); // format input as Message object
-                push_message(sent_msg);         // save to msg history
+                String input = get_input();    
+                send(input);                        
+                push_message(new Message(get_timestamp(), local_name, input));         // save to msg history
                             
-                // Receive input to server, format, then save
-                String buffer = receive();                  // read input from socket
-                Message rec_msg = new Message(get_timestamp(), peer_name, buffer); // format buffer as Message object
-                push_message(rec_msg);              // Save to msg history
+                String buffer = receive();                  
+                push_message(new Message(get_timestamp(), peer_name, buffer));              // Save to msg history
 
                 clear_terminal();
                 display_msg_history();
@@ -60,26 +56,21 @@ public class Client extends Chat{
         }
         catch (Exception e) {
             System.err.println("Session terminated: " + e.getMessage());
-            exit_session();
         }
-    }
-
-    @Override
-    public void exit_session()
-    {
-        try{
-            // Log messages
-            for (Message message : msg_history) {
-                log_message(message);
+        finally{
+            try{
+                // Log messages
+                for (Message message : msg_history) {
+                    log_message(message);
+                }
+                socket.close();
+                sc.close();
+                writer.close();
+                reader.close();
             }
-
-            socket.close();
-            sc.close();
-            writer.close();
-            reader.close();
-        }
-        catch (Exception e){
-            System.err.println("Session cant exit properly: " + e.getMessage());
+            catch (Exception e){
+                System.err.println("Session cant exit properly: " + e.getMessage());
+            }
         }
     }
 }
