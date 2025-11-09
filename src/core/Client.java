@@ -32,6 +32,7 @@ public class Client extends Chat{
 
         clear_terminal();
         System.out.println("Connected to " + peer_name + " at "+ socket.getInetAddress());
+        System.out.println("Type /exit for disconnection");
     }
 
     @Override

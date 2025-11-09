@@ -1,4 +1,3 @@
-
 package core;
 import java.net.*;
 public class Server extends Chat{
@@ -27,6 +26,7 @@ public class Server extends Chat{
         // Notify connection
         clear_terminal();
         System.out.println("Connected to " + peer_name + " at "+ socket.getInetAddress());
+        System.out.println("Type /exit for disconnection");
     }
     @Override
     public void start() throws Exception{

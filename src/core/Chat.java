@@ -113,7 +113,7 @@ public abstract class Chat{
         System.out.print("Enter message >> ");
         String input = sc.nextLine();
         if (input.equals("/exit")) 
-            throw new Exception("User Exited"); 
+            throw new Exception("User Exited");
         return input;
     }
     // Utility methods
