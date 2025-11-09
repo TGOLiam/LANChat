@@ -165,9 +165,8 @@ public abstract class Chat{
         DateTimeFormatter formatted_t = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return t.format(formatted_t);
     }
-    protected void clear_output()
-    {
-        System.out.print("\033[K\033c");
+    protected void clear_terminal() {
+        System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 }

@@ -27,7 +27,7 @@ public class Server extends Chat{
             initialize_logs();
 
             // Notify connection
-            clear_output();
+            clear_terminal();
             System.out.println("Connected to " + peer_name + " at "+ socket.getInetAddress());
         }
         catch (Exception e){  
@@ -44,7 +44,7 @@ public class Server extends Chat{
                 Message rec_msg = new Message(get_timestamp(), peer_name, buffer); // format buffer as Message object
                 push_message(rec_msg);          
 
-                clear_output();
+                clear_terminal();
                 display_msg_history();
 
                 String input = get_input();

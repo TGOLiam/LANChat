@@ -31,7 +31,7 @@ public class Client extends Chat{
             // Initialize the session
             initialize_logs();
 
-            clear_output();
+            clear_terminal();
             System.out.println("Connected to " + peer_name + " at "+ socket.getInetAddress());
         }
         catch (Exception e){  
@@ -54,7 +54,7 @@ public class Client extends Chat{
                 Message rec_msg = new Message(get_timestamp(), peer_name, buffer); // format buffer as Message object
                 push_message(rec_msg);              // Save to msg history
 
-                clear_output();
+                clear_terminal();
                 display_msg_history();
             }
         }
