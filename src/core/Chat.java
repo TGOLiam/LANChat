@@ -6,8 +6,10 @@ import java.time.LocalDateTime; // Import the LocalDateTime class
 import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 
 public abstract class Chat{
-    protected Socket socket = null;            // Socket for networking
+    // Socket classes for networking
+    protected Socket socket = null;            
     protected ServerSocket server = null;
+    
     protected Deque<Message> msg_history = new ArrayDeque<>();      // For easy deletion/addition
 
     // Input/Output Streams
