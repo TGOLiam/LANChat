@@ -2,7 +2,9 @@ package app;
 
 import core.Server;
 import core.Client;
+import core.Chat;
 import java.util.Scanner;
+import java.util.*;
 
 public class ChatApp {
     public static void main(String[] args) {
@@ -10,11 +12,14 @@ public class ChatApp {
         String username = "Guest";
         Scanner sc = new Scanner(System.in);
 
+        Chat chat = null;
+        Map<String, String> hosts = null;
+
         while (true) {
             System.out.println("\n=== Chat App ===");
             System.out.println("Welcome, " + username + "!");
-            System.out.println("[1] Start as Server");
-            System.out.println("[2] Start as Client");
+            System.out.println("[1] Host");
+            System.out.println("[2] Connect");
             System.out.println("[3] Change Username");
             System.out.println("[0] Exit");
             System.out.print("Choose mode: ");
@@ -24,35 +29,48 @@ public class ChatApp {
 
             switch (choice) {
                 case 1:
-                    Server server = null;
                     try {
-                        server = new Server(username, PORT);
-                        server.start();
+                        chat = new Server(username, PORT);
+                        chat.start();
                     } catch (Exception e) {
                         System.err.println("Session terminated: " + e.getMessage());
                     }
                     finally{
-                        if (server != null) server.terminate();
+                        if (chat != null) chat.terminate();
                     }
-
                     break;
 
                 case 2:
-                    System.out.print("Enter IP address: ");
-                    String ip = sc.nextLine();
+                    hosts = Chat.get_peers(PORT);
 
-                    Client client = null;
+                    if (hosts.isEmpty()) {
+                        System.out.println("No peers found");
+                        break;
+                    }
+                    System.out.println("Peer list:");
+                    int i = 1;
+                    for (String name : hosts.keySet()){
+                        System.out.println(i++ + ": " + name);
+                    }
+
+                    System.out.print("Enter peer's username: ");
+                    String peer_name = sc.nextLine();
+
+                    String ip = hosts.get(peer_name);
+                    if (ip == null){
+                        System.out.println("Peer not found");
+                        break;
+                    }
                     try{
-                        client = new Client(username, ip, PORT);
-                        client.start();
+                        chat = new Client(username, ip, PORT);
+                        chat.start();
                     }
                     catch (Exception e){
                         System.err.println("Session terminated: " + e.getMessage());
                     }
                     finally{
-                        if (client != null) client.terminate();
+                        if (chat != null) chat.terminate();
                     }
-
                     break;
                 case 3:
                     System.out.print("Enter new username: ");
@@ -63,7 +81,6 @@ public class ChatApp {
                     System.out.println("Exiting Chat App...");
                     sc.close();
                     return;
-
                 default:
                     System.out.println("Invalid choice. Try again.");
                     break;

@@ -193,4 +193,48 @@ public abstract class Chat{
         System.out.print("\033[K\033c");
         System.out.flush();
     }
+
+
+    void broadcast(int port) {
+        new Thread(() -> {
+            try (DatagramSocket socket = new DatagramSocket()) {
+                socket.setBroadcast(true);
+                byte[] data = ("LANCHAT_BROADCAST_" + local_name).getBytes();
+                InetAddress addr = InetAddress.getByName("255.255.255.255");
+                DatagramPacket packet = new DatagramPacket(data, data.length, addr, port);
+
+                for (int i = 0; i < 10; i++) {
+                    socket.send(packet);
+                    Thread.sleep(1000);
+                }
+            } catch (Exception e) {
+                System.err.println("Broadcast error: " + e.getMessage());
+            }
+        }).start();
+    }
+
+    public static Map<String, String> get_peers(int port) {
+        Map<String, String> peers = new HashMap<>();
+        try (DatagramSocket socket = new DatagramSocket(port)) {
+            socket.setSoTimeout(1000);
+            byte[] buf = new byte[256];
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+
+            System.out.println("Finding hosts...\n");
+
+            for (int i = 0; i < 10; i++) {
+                try {
+                    socket.receive(packet);
+                    String msg = new String(packet.getData(), 0, packet.getLength());
+                    if (msg.startsWith("LANCHAT_BROADCAST_")) {
+                        String name = msg.substring("LANCHAT_BROADCAST_".length());
+                        peers.putIfAbsent(name, packet.getAddress().getHostAddress());
+                    }
+                } catch (SocketTimeoutException ignored) {}
+            }
+        } catch (Exception e) {
+            System.err.println("Discovery error: " + e.getMessage());
+        }
+        return peers;
+    }
 }

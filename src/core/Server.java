@@ -13,6 +13,8 @@ public class Server extends Chat{
     protected void init(String addr, int port) throws Exception
     {
         // setup server socket, and listen for connections
+            broadcast(port);
+
             server = new ServerSocket(port);
             socket = server.accept();
             socket.setSoTimeout(SOCKET_TIMEOUT_MS); // 60 seconds read timeout
