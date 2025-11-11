@@ -13,8 +13,8 @@ public class ChatApp {
         while (true) {
             System.out.println("\n=== Chat App ===");
             System.out.println("Welcome, " + username + "!");
-            System.out.println("[1] Start as Server");
-            System.out.println("[2] Start as Client");
+            System.out.println("[1] Host");
+            System.out.println("[2] Connect");
             System.out.println("[3] Change Username");
             System.out.println("[0] Exit");
             System.out.print("Choose mode: ");
