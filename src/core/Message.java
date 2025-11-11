@@ -1,6 +1,6 @@
 // Message class for message info
 package core;
-public class Message{
+class Message{
     String user;
     String message;
     String timestamp;

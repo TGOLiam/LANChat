@@ -7,7 +7,11 @@ public class Client extends Chat{
     {
         System.out.println("Connecting...");
         local_name = username;           // Set username
-        
+        init(addr, port);
+    }
+
+    @Override
+    protected void init(String addr, int port) throws Exception {
         // Try many times if server is closed
         while (true) {
             try {
@@ -19,7 +23,7 @@ public class Client extends Chat{
             }
         }
         socket.setSoTimeout(SOCKET_TIMEOUT_MS); // 60 seconds read timeout
-        
+
         // Set up streams first
         initialize_streams();
 
@@ -33,23 +37,5 @@ public class Client extends Chat{
         clear_terminal();
         System.out.println("Connected to " + peer_name + " at "+ socket.getInetAddress());
         System.out.println("Type /exit for disconnection");
-    }
-
-    @Override
-    public void start() throws Exception{
-        while (true) {
-            String input = get_input();    
-            send(input);                        
-            push_message(new Message(get_timestamp(), local_name, input));         // save to msg history
-            clear_terminal();
-            display_msg_history();
-
-            System.out.println("Waiting for reply...");
-
-            String buffer = receive();                  
-            push_message(new Message(get_timestamp(), peer_name, buffer));              // Save to msg history
-            clear_terminal();
-            display_msg_history();
-        }
     }
 }
