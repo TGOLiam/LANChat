@@ -7,12 +7,15 @@ import java.util.Scanner;
 public class ChatApp {
     public static void main(String[] args) {
         final int PORT = 5424;
+        String username = "Guest";
         Scanner sc = new Scanner(System.in);
 
         while (true) {
             System.out.println("\n=== Chat App ===");
+            System.out.println("Welcome, " + username + "!");
             System.out.println("[1] Start as Server");
             System.out.println("[2] Start as Client");
+            System.out.println("[3] Change Username");
             System.out.println("[0] Exit");
             System.out.print("Choose mode: ");
 
@@ -21,12 +24,9 @@ public class ChatApp {
 
             switch (choice) {
                 case 1:
-                    System.out.print("Enter username: ");
-                    String serverUser = sc.nextLine();
                     Server server = null;
-
                     try {
-                        server = new Server(serverUser, PORT);
+                        server = new Server(username, PORT);
                         server.start();
                     } catch (Exception e) {
                         System.err.println("Session terminated: " + e.getMessage());
@@ -38,15 +38,12 @@ public class ChatApp {
                     break;
 
                 case 2:
-                    System.out.print("Enter username: ");
-                    String clientUser = sc.nextLine();
-
                     System.out.print("Enter IP address: ");
                     String ip = sc.nextLine();
 
                     Client client = null;
                     try{
-                        client = new Client(clientUser, ip, PORT);
+                        client = new Client(username, ip, PORT);
                         client.start();
                     }
                     catch (Exception e){
@@ -56,6 +53,11 @@ public class ChatApp {
                         if (client != null) client.terminate();
                     }
 
+                    break;
+                case 3:
+                    System.out.print("Enter new username: ");
+                    username = sc.nextLine();
+                    System.out.println("Username changed to: " + username);
                     break;
                 case 0:
                     System.out.println("Exiting Chat App...");

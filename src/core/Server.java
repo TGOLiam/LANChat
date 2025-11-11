@@ -29,7 +29,6 @@ public class Server extends Chat{
 
             // Notify connection
             clear_terminal();
-            System.out.println("Connected to " + peer_name + " at "+ socket.getInetAddress());
-            System.out.println("Type /exit for disconnection");
+            display_msg_history();
     }
 }

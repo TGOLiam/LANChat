@@ -137,7 +137,7 @@ public abstract class Chat{
     void log_message(Message m) throws Exception         // Save message into file
     {
         try {
-            writer.write(String.format("[%s] %s: %s\n", m.timestamp, m.user, m.message));
+            writer.write(String.format("[%s %s] %s: %s\n", get_date(),m.timestamp, m.user, m.message));
             writer.flush();
         } catch (IOException e) {
             throw new Exception("Cant write to file.");
@@ -156,20 +156,39 @@ public abstract class Chat{
         System.out.print("Enter message >> ");
         String input = sc.nextLine();
         if (input.equals("/exit")) throw new Exception("User Exited");
-        if (input.isBlank()) return null;
+        else if (input.isBlank()) return null;
+        else if (input.equals("/help")){
+            System.out.println("Press [Enter] to refresh messages (leave blank to skip sending)");
+            System.out.println("/exit - Exit the chat");
+            System.out.println("/help - Display this help message");
+
+            System.out.println("\nPress [Enter] to continue...");
+            sc.nextLine();
+            return null;
+        }
+
         return input;
     }
     // Utility methods
     void display_msg_history()
     {
         System.out.println("Connected to " + peer_name + " at "+ socket.getInetAddress());
+        System.out.println("Type /help for guide");
         for (Message m : msg_history)
-            System.out.printf("[%s] %s\n", m.user, m.message);
+            System.out.printf("[%s %s] %s\n", m.timestamp, m.user, m.message);
     }
     String get_timestamp() {
-        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("hh:mm a");
         return LocalDateTime.now().format(f);
     }
+    String get_date() {
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDateTime.now().format(f);
+    }
+    String get_time() {
+        return get_date() + " " + get_timestamp();
+    }
+
     void clear_terminal() {
         System.out.print("\033[K\033c");
         System.out.flush();
