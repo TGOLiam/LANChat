@@ -13,14 +13,25 @@ public class ChatApp {
         Scanner sc = new Scanner(System.in);
 
         Chat chat = null;
-        Map<String, String> hosts = null;
+        Map<String, String> hosts = C;
 
         while (true) {
-            System.out.println("\n=== Chat App ===");
+            System.out.println("\n=== LAN Chat App ===");
             System.out.println("Welcome, " + username + "!");
-            System.out.println("[1] Host");
-            System.out.println("[2] Connect");
-            System.out.println("[3] Change Username");
+            System.out.println("------------------------------");
+            System.out.println("Online Hosts:");
+            if (hosts.isEmpty()) {
+                System.out.println("  No hosts available at the moment.");
+            }
+            int i = 1;
+            for (String name : hosts.keySet()) {
+                System.out.println("  [" + i + "] " + name);
+                i++;
+            }
+            System.out.println("------------------------------");
+            System.out.println("[1] Host a chat");
+            System.out.println("[2] Connect to host");
+            System.out.println("[3] Change username");
             System.out.println("[0] Exit");
             System.out.print("Choose mode: ");
 
@@ -41,18 +52,6 @@ public class ChatApp {
                     break;
 
                 case 2:
-                    hosts = Chat.get_peers(PORT);
-
-                    if (hosts.isEmpty()) {
-                        System.out.println("No peers found");
-                        break;
-                    }
-                    System.out.println("Peer list:");
-                    int i = 1;
-                    for (String name : hosts.keySet()){
-                        System.out.println(i++ + ": " + name);
-                    }
-
                     System.out.print("Enter peer's username: ");
                     String peer_name = sc.nextLine();
 
@@ -77,6 +76,8 @@ public class ChatApp {
                     username = sc.nextLine();
                     System.out.println("Username changed to: " + username);
                     break;
+                case 4:
+                    hosts = Chat.get_peers(PORT);
                 case 0:
                     System.out.println("Exiting Chat App...");
                     sc.close();
