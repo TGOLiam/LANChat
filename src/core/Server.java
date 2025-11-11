@@ -4,7 +4,6 @@ public class Server extends Chat{
     public Server(String username, int port) throws Exception
     {
         System.out.println("Server opened...");
-
         // set username
         local_name = username;
         init(null, port);

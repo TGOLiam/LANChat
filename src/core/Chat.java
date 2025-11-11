@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 public abstract class Chat{
     // Socket classes for networking
     Socket socket = null;
-    ServerSocket server = null;                             // 
+    ServerSocket server = null;                             //
     Exception receiverException = null;                    // To handle exceptions in the receiver thread
     Deque<Message> msg_history = new ArrayDeque<>();      // For easy deletion/addition
 
@@ -30,6 +30,7 @@ public abstract class Chat{
     // methods to be implemented by subclasses
     protected abstract void init(String addr, int port) throws Exception;
 
+    // methods
     public void start() throws Exception {
         // Single long-lived thread for receiving messages
         Thread receiver = new Thread(() -> {
@@ -54,8 +55,21 @@ public abstract class Chat{
             }
             clear_terminal();
             display_msg_history();
+        }
+    }
+    public void terminate() {
+        try {
+            // Log remaining messages from history
+            for (Message message : msg_history)
+                log_message(message);
 
-            System.out.println("Waiting for reply...");
+            // Close all resources
+            if (socket != null) socket.close();
+            if (server != null) server.close();
+            if (writer != null) writer.close();
+            if (reader != null) reader.close();
+        } catch (Exception e) {
+            System.err.println("Error during cleanup: " + e.getMessage());
         }
     }
 
@@ -141,10 +155,8 @@ public abstract class Chat{
         System.out.flush();
         System.out.print("Enter message >> ");
         String input = sc.nextLine();
-        if (input.equals("/exit"))
-            throw new Exception("User Exited");
-        if (input.isBlank())
-        return null;
+        if (input.equals("/exit")) throw new Exception("User Exited");
+        if (input.isBlank()) return null;
         return input;
     }
     // Utility methods
@@ -161,20 +173,5 @@ public abstract class Chat{
     void clear_terminal() {
         System.out.print("\033[K\033c");
         System.out.flush();
-    }
-    public void terminate() {
-        try {
-            // Log remaining messages from history
-            for (Message message : msg_history)
-                log_message(message);
-
-            // Close all resources
-            if (socket != null) socket.close();
-            if (server != null) server.close();
-            if (writer != null) writer.close();
-            if (reader != null) reader.close();
-        } catch (Exception e) {
-            System.err.println("Error during cleanup: " + e.getMessage());
-        }
     }
 }

@@ -10,7 +10,7 @@ public class ChatApp {
         Scanner sc = new Scanner(System.in);
 
         while (true) {
-            System.out.println("\n=== Chat App Setup ===");
+            System.out.println("\n=== Chat App ===");
             System.out.println("[1] Start as Server");
             System.out.println("[2] Start as Client");
             System.out.println("[0] Exit");
