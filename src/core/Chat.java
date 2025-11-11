@@ -24,7 +24,7 @@ public abstract class Chat{
     String peer_name = null;
 
     // Constants
-    final byte MAX_RECENT_MSG = 10;
+    final byte MAX_RECENT_MSG = 20;
     final int SOCKET_TIMEOUT_MS = 60_000;
 
     // methods to be implemented by subclasses
