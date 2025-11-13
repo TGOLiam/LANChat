@@ -26,6 +26,7 @@ public abstract class Chat{
     // Constants
     final byte MAX_RECENT_MSG = 10;
     final int SOCKET_TIMEOUT_MS = 60_000;
+    static final int DISCOVERY_PORT = 5425;
 
     // methods to be implemented by subclasses
     protected abstract void init(String addr, int port) throws Exception;
@@ -195,13 +196,13 @@ public abstract class Chat{
     }
 
 
-    void broadcast(int port) {
+    void broadcast() {
         new Thread(() -> {
             try (DatagramSocket socket = new DatagramSocket()) {
                 socket.setBroadcast(true);
                 byte[] data = ("LANCHAT_BROADCAST_" + local_name).getBytes();
                 InetAddress addr = InetAddress.getByName("255.255.255.255");
-                DatagramPacket packet = new DatagramPacket(data, data.length, addr, port);
+                DatagramPacket packet = new DatagramPacket(data, data.length, addr, DISCOVERY_PORT);
 
                 for (int i = 0; i < 10; i++) {
                     socket.send(packet);
@@ -213,9 +214,9 @@ public abstract class Chat{
         }).start();
     }
 
-    public static Map<String, String> get_peers(int port) {
+    public static Map<String, String> get_peers() {
         Map<String, String> peers = new HashMap<>();
-        try (DatagramSocket socket = new DatagramSocket(port)) {
+        try (DatagramSocket socket = new DatagramSocket(DISCOVERY_PORT)) {
             socket.setSoTimeout(1000);
             byte[] buf = new byte[256];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);

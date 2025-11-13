@@ -13,7 +13,7 @@ public class Server extends Chat{
     protected void init(String addr, int port) throws Exception
     {
         // setup server socket, and listen for connections
-            broadcast(port);
+            broadcast();
 
             server = new ServerSocket(port);
             socket = server.accept();
