@@ -12,6 +12,7 @@ public class ChatApp {
         String username = "Guest";
         Scanner sc = new Scanner(System.in);
 
+        System.out.println("Setting up app...");
         Chat chat = null;
         Map<String, String> hosts = Chat.get_peers();
 
@@ -34,16 +35,18 @@ public class ChatApp {
             System.out.println("------------------------------");
 
 
-            System.out.println("[1] Host");
-            System.out.println("[2] Connect");
-            System.out.println("[3] Change Username");
-            System.out.println("[4] Refresh peer lists")
+            System.out.println("[1] Host a session");
+            System.out.println("[2] Connect to a host");
+            System.out.println("[3] Connect to computer");
+            System.out.println("[4] Change Username");
+            System.out.println("[5] Refresh peer lists");
             System.out.println("[0] Exit");
             System.out.print("Choose mode: ");
 
             int choice = sc.nextInt();
             sc.nextLine(); // consume newline
 
+            String ip = null;
             switch (choice) {
                 case 1:
                     try {
@@ -60,13 +63,14 @@ public class ChatApp {
                 case 2:
                     if (hosts.isEmpty()) {
                         System.out.println("No peers found");
+                        System.out.println("Finding hosts...");
                         hosts = Chat.get_peers();
                         break;
                     }
                     System.out.print("Enter peer's username: ");
                     String peer_name = sc.nextLine();
 
-                    String ip = hosts.get(peer_name);
+                    ip = hosts.get(peer_name);
                     if (ip == null){
                         System.out.println("Peer not found");
                         break;
@@ -83,12 +87,29 @@ public class ChatApp {
                     }
                     break;
                 case 3:
+                    System.out.print("Enter computer's address: ");
+                    ip = sc.nextLine();
+
+                    try{
+                        chat = new Client(username, ip, PORT);
+                        chat.start();
+                    }
+                    catch (Exception e){
+                        System.err.println("Session terminated: " + e.getMessage());
+                    }
+                    finally{
+                        if (chat != null) chat.terminate();
+                    }
+                    break;
+                case 4:
                     System.out.print("Enter new username: ");
                     username = sc.nextLine();
                     System.out.println("Username changed to: " + username);
                     break;
-                case 4:
+                case 5:
+                    System.out.println("Finding hosts...");
                     hosts = Chat.get_peers();
+                    if (hosts == null) System.out.println("No peers found, try connecting thru address instead.");
                     break;
                 case 0:
                     System.out.println("Exiting Chat App...");

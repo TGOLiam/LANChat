@@ -221,8 +221,6 @@ public abstract class Chat{
             byte[] buf = new byte[256];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
 
-            System.out.println("Finding hosts...\n");
-
             for (int i = 0; i < 10; i++) {
                 try {
                     socket.receive(packet);
