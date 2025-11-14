@@ -16,6 +16,7 @@ public class Server extends Chat{
             broadcast();
 
             server = new ServerSocket(port);
+            server.setSoTimeout(SOCKET_TIMEOUT_MS); // 60 seconds read timeout
             socket = server.accept();
             socket.setSoTimeout(SOCKET_TIMEOUT_MS); // 60 seconds read timeout
 

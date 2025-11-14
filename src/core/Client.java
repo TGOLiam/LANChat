@@ -13,11 +13,13 @@ public class Client extends Chat{
     @Override
     protected void init(String addr, int port) throws Exception {
         // Try many times if server is closed
+        int i = 0;
         while (true) {
             try {
                 socket = new Socket(addr, port);
                 break; // connected successfully
             } catch (IOException e) {
+                if (i++ > 5) throw new Exception("Cant connect to server.");
                 System.out.println("Server not available, retrying in 3 second...");
                 Thread.sleep(3000);
             }

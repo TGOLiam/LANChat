@@ -3,18 +3,18 @@ package app;
 import core.Server;
 import core.Client;
 import core.Chat;
-import java.util.Scanner;
+
 import java.util.*;
 
 public class ChatApp {
+    private static Map<String, String> hosts = new HashMap<>();
+    private static final int PORT = 5424;
+
     public static void main(String[] args) {
-        final int PORT = 5424;
         String username = "Guest";
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("Setting up app...");
         Chat chat = null;
-        Map<String, String> hosts = Chat.get_peers();
 
         while (true) {
             System.out.println("\n=== LAN Chat App ===");
@@ -22,9 +22,9 @@ public class ChatApp {
             System.out.println("------------------------------");
 
             // Display online hosts dynamically
-            System.out.println("Online Hosts:");
+            System.out.println("Online sessions:");
             if (hosts.isEmpty()) {
-                System.out.println("  No hosts available at the moment.");
+                System.out.println("  No sessions available at the moment.");
             } else {
                 int index = 1;
                 for (String host : hosts.keySet()) {
@@ -33,18 +33,24 @@ public class ChatApp {
                 }
             }
             System.out.println("------------------------------");
-
-
-            System.out.println("[1] Host a session");
-            System.out.println("[2] Connect to a host");
-            System.out.println("[3] Connect to computer");
-            System.out.println("[4] Change Username");
-            System.out.println("[5] Refresh peer lists");
+            System.out.println("[1] Start hosting");
+            System.out.println("[2] Join a session");
+            System.out.println("[3] Connect via IP Address");
+            System.out.println("[4] Change username");
+            System.out.println("[5] Refresh session list");
             System.out.println("[0] Exit");
             System.out.print("Choose mode: ");
 
-            int choice = sc.nextInt();
-            sc.nextLine(); // consume newline
+            int choice;
+            try{
+                choice = sc.nextInt();
+                sc.nextLine(); // consume newline
+            }
+            catch (InputMismatchException ime)
+            {
+                System.out.println("Invalid input. Try again.");
+                continue;
+            }
 
             String ip = null;
             switch (choice) {
@@ -63,8 +69,7 @@ public class ChatApp {
                 case 2:
                     if (hosts.isEmpty()) {
                         System.out.println("No peers found");
-                        System.out.println("Finding hosts...");
-                        hosts = Chat.get_peers();
+                        update_hosts();
                         break;
                     }
                     System.out.print("Enter peer's username: ");
@@ -75,15 +80,12 @@ public class ChatApp {
                         System.out.println("Peer not found");
                         break;
                     }
+
                     try{
-                        chat = new Client(username, ip, PORT);
-                        chat.start();
+                        run(new Client(username, ip, PORT));
                     }
                     catch (Exception e){
-                        System.err.println("Session terminated: " + e.getMessage());
-                    }
-                    finally{
-                        if (chat != null) chat.terminate();
+                        System.err.println("Session cant start: " + e.getMessage());
                     }
                     break;
                 case 3:
@@ -91,14 +93,10 @@ public class ChatApp {
                     ip = sc.nextLine();
 
                     try{
-                        chat = new Client(username, ip, PORT);
-                        chat.start();
+                        run(new Client(username, ip, PORT));
                     }
                     catch (Exception e){
-                        System.err.println("Session terminated: " + e.getMessage());
-                    }
-                    finally{
-                        if (chat != null) chat.terminate();
+                        System.err.println("Session cant start: " + e.getMessage());
                     }
                     break;
                 case 4:
@@ -107,9 +105,7 @@ public class ChatApp {
                     System.out.println("Username changed to: " + username);
                     break;
                 case 5:
-                    System.out.println("Finding hosts...");
-                    hosts = Chat.get_peers();
-                    if (hosts == null) System.out.println("No peers found, try connecting thru address instead.");
+                    update_hosts();
                     break;
                 case 0:
                     System.out.println("Exiting Chat App...");
@@ -120,5 +116,19 @@ public class ChatApp {
                     break;
             }
         }
+    }
+    private static void run(Chat chat){
+        try{ chat.start(); }
+        catch (Exception e ) { System.err.println("Session terminated: " + e.getMessage()); }
+        finally { if (chat != null) chat.terminate(); }
+    }
+
+    private static void update_hosts()
+    {
+        hosts.clear();
+        System.out.println("Finding hosts...");
+        hosts = Chat.get_peers();
+        if (hosts.isEmpty()) System.out.println("No peers found, try connecting thru address instead.");
+        else System.out.println("Peers found!");
     }
 }

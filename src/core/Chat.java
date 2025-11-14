@@ -195,7 +195,6 @@ public abstract class Chat{
         System.out.flush();
     }
 
-
     void broadcast() {
         new Thread(() -> {
             try (DatagramSocket socket = new DatagramSocket()) {
