@@ -173,7 +173,7 @@ public abstract class Chat{
     // Utility methods
     void display_msg_history()
     {
-        System.out.println("Connected to " + peer_name + " at "+ socket.getInetAddress());
+        System.out.println("[Connected to " + peer_name + "]");
         System.out.println("Type /help for guide");
         for (Message m : msg_history)
             System.out.printf("[%s %s] %s\n", m.timestamp, m.user, m.message);

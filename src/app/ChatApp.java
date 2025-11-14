@@ -37,38 +37,35 @@ public class ChatApp {
             }
 
             String ip = null;
-            switch (choice) {
-                case 1:
-                    try {
-                        run(new Server(username, PORT));
-                    } catch (Exception e) {
-                        System.err.println("Session cant start: " + e.getMessage());
-                    }
-                    break;
-                case 2:
-                    System.out.print("Enter computer's address: ");
-                    ip = sc.nextLine();
+            if(choice == 1){
+                try{
+                    run(new Server(username, PORT));
+                } catch (Exception e) {
+                    System.err.println("Session cant start: " + e.getMessage());
+                }
+            }
+            else if (choice == 2){
+                System.out.print("Enter computer's address: ");
+                ip = sc.nextLine();
 
-                    try{
-                        run(new Client(username, ip, PORT));
-                    }
-                    catch (Exception e){
-                        System.err.println("Session cant start: " + e.getMessage());
-                    }
-                    break;
-                case 3:
-                    System.out.print("Enter new username: ");
-                    username = sc.nextLine();
-                    System.out.println("Username changed to: " + username);
-                    break;
-
-                case 0:
-                    System.out.println("Exiting Chat App...");
-                    sc.close();
-                    return;
-                default:
-                    System.out.println("Invalid choice. Try again.");
-                    break;
+                try{
+                    run(new Client(username, ip, PORT));
+                }
+                catch (Exception e){
+                    System.err.println("Session cant start: " + e.getMessage());
+                }
+            }
+            else if (choice == 3){
+                System.out.print("Enter new username: ");
+                username = sc.nextLine();
+                System.out.println("Username changed to: " + username);
+            }
+            else if (choice == 0){
+                System.out.println("Exiting Chat App...");
+                sc.close();
+                return;
+            }
+            else System.out.println("Invalid choice. Try again.");
             }
         }
     }
