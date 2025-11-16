@@ -7,13 +7,8 @@ import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 
 public abstract class Chat{
     // Socket classes for networking
-<<<<<<< HEAD
-    Socket socket = null;                                   // Socket for connecting to the server
-    ServerSocket server = null;                             // ServerSocket for listening for incoming connections
-=======
     Socket socket = null;
     ServerSocket server = null;
->>>>>>> demo_manual
     Exception receiverException = null;                    // To handle exceptions in the receiver thread
     Deque<Message> msg_history = new ArrayDeque<>();      // For easy deletion/addition
 
@@ -29,19 +24,13 @@ public abstract class Chat{
     String peer_name = null;                               // Username of the peer user
 
     // Constants
-<<<<<<< HEAD
-    final byte MAX_RECENT_MSG = 10;                         // Maximum number of recent messages to keep
-    final int SOCKET_TIMEOUT_MS = 60_000;                   // Timeout for socket operations
-=======
-    final byte MAX_RECENT_MSG = 10;
-    final int SOCKET_TIMEOUT_MS = 60_000;
-    static final int DISCOVERY_PORT = 5425;
->>>>>>> demo_manual
+    final byte MAX_RECENT_MSG = 10;                         // Max messages loaded into memory
+    final int SOCKET_TIMEOUT_MS = 60_000;                   // Socket timeout of 60 seconds
 
-    // methods to be implemented by subclasses
+    // method to be implemented by subclasses
     protected abstract void init(String addr, int port) throws Exception;
 
-    // methods
+    // Public methods
     public void start() throws Exception {
         // Single long-lived thread for receiving messages
         new Thread(() -> {
@@ -52,10 +41,7 @@ public abstract class Chat{
                 receiverException = e; // Log the exception
             }
         }).start();
-<<<<<<< HEAD
-=======
 
->>>>>>> demo_manual
         // Main loop: send messages and display history
         while (true) {
             if (receiverException != null) { // if receiver thread has an exception
@@ -187,13 +173,8 @@ public abstract class Chat{
     // Utility methods
     void display_msg_history()
     {
-<<<<<<< HEAD
         System.out.println("Connected to " + peer_name + " at "+ socket.getInetAddress()); // display connection info
         System.out.println("Type /help for guide"); // display help message
-=======
-        System.out.println("[Connected to " + peer_name + "]");
-        System.out.println("Type /help for guide");
->>>>>>> demo_manual
         for (Message m : msg_history)
             System.out.printf("[%s %s] %s\n", m.timestamp, m.user, m.message); // display message history
     }
@@ -208,61 +189,9 @@ public abstract class Chat{
     String get_time() { // Combines date and timestamp
         return get_date() + " " + get_timestamp();
     }
-<<<<<<< HEAD
 
     void clear_terminal() { // Clears terminal screen
         System.out.print("\033[K\033c");
         System.out.flush();
     }
-
-    void broadcast(int port) { // Broadcasts LANChat message to all devices on the network
-        new Thread(() -> { // thread for broadcast
-            try  {
-                DatagramSocket socket = new DatagramSocket(); // Create a new DatagramSocket
-                socket.setBroadcast(true); // Enable broadcast mode
-                byte[] data = ("LANCHAT_BROADCAST_" + local_name).getBytes(); // Convert to bytes
-                InetAddress addr = InetAddress.getByName("255.255.255.255"); // Convert to InetAddress
-                DatagramPacket packet = new DatagramPacket(data, data.length, addr, port); // Create packet
-
-                for (int i = 0; i < 10; i++) { // Broadcast packet every second
-                    socket.send(packet); // Send packet
-                    Thread.sleep(1000); // Wait for 1 second
-                }
-            } catch (Exception e) {
-                System.err.println("Broadcast error: " + e.getMessage());
-            }
-        }).start();
-    }
-
-    public static Map<String, String> get_peers(int port) { // gets peers, returns map of peers (username, address)
-        Map<String, String> peers = new HashMap<>(); // Initialize peers map
-        try  {
-            DatagramSocket socket = new DatagramSocket(port); // Create socket
-            socket.setSoTimeout(1000); // Set timeout
-            byte[] buf = new byte[256]; // Initialize buffer
-            DatagramPacket packet = new DatagramPacket(buf, buf.length); // Initialize packet
-
-            System.out.println("Finding hosts...\n");
-
-            for (int i = 0; i < 10; i++) { // Receive packets
-                try {
-                    socket.receive(packet); // Receive packet
-                    String msg = new String(packet.getData(), 0, packet.getLength()); // Convert into string
-                    if (msg.startsWith("LANCHAT_BROADCAST_")) { // Check if message starts with LANCHAT_BROADCAST_
-                        String name = msg.substring("LANCHAT_BROADCAST_".length()); // Extract name
-                        peers.putIfAbsent(name, packet.getAddress().getHostAddress()); // Add peer to map
-                    }
-                } catch (SocketTimeoutException ignored) {} // Ignore timeout exception
-            }
-        } catch (Exception e) {
-            System.err.println("Discovery error: " + e.getMessage());
-        }
-        return peers; // Return peers map
-    }
-=======
-    void clear_terminal() {
-        System.out.print("\033[K\033c");
-        System.out.flush();
-    }
->>>>>>> demo_manual
 }
