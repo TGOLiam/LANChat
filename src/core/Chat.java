@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 public abstract class Chat{
     // Socket classes for networking
     Socket socket = null;
-    ServerSocket server = null;                             //
+    ServerSocket server = null;
     Exception receiverException = null;                    // To handle exceptions in the receiver thread
     Deque<Message> msg_history = new ArrayDeque<>();      // For easy deletion/addition
 
@@ -34,14 +34,14 @@ public abstract class Chat{
     // methods
     public void start() throws Exception {
         // Single long-lived thread for receiving messages
-        Thread receiver = new Thread(() -> {
+        new Thread(() -> {
             try{
                 while (true) push_message(new Message(get_timestamp(), peer_name, receive()));
             }catch(Exception e){
                 receiverException = e;
             }
-        });
-        receiver.start();
+        }).start();
+
         // Main loop: send messages and display history
         while (true) {
             if (receiverException != null) {
@@ -189,7 +189,6 @@ public abstract class Chat{
     String get_time() {
         return get_date() + " " + get_timestamp();
     }
-
     void clear_terminal() {
         System.out.print("\033[K\033c");
         System.out.flush();

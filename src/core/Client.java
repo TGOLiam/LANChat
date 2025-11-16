@@ -20,7 +20,7 @@ public class Client extends Chat{
                 break; // connected successfully
             } catch (IOException e) {
                 if (i++ > 5) throw new Exception("Cant connect to server.");
-                System.out.println("Server not available, retrying in 3 second...");
+                System.out.println("Server not available, retrying in 3 seconds...");
                 Thread.sleep(3000);
             }
         }

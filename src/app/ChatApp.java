@@ -47,7 +47,6 @@ public class ChatApp {
             else if (choice == 2){
                 System.out.print("Enter computer's address: ");
                 ip = sc.nextLine();
-
                 try{
                     run(new Client(username, ip, PORT));
                 }
@@ -66,12 +65,17 @@ public class ChatApp {
                 return;
             }
             else System.out.println("Invalid choice. Try again.");
-            }
         }
     }
     private static void run(Chat chat){
-        try{ chat.start(); }
-        catch (Exception e ) { System.err.println("Session terminated: " + e.getMessage()); }
-        finally { if (chat != null) chat.terminate(); }
+        try{
+            chat.start();
+        }
+        catch (Exception e ) {
+            System.err.println("Session terminated: " + e.getMessage());
+        }
+        finally {
+            if (chat != null) chat.terminate();
+        }
     }
 }

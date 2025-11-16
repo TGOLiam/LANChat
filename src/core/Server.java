@@ -3,7 +3,6 @@ import java.net.*;
 public class Server extends Chat{
     public Server(String username, int port) throws Exception
     {
-        System.out.println("Server opened...");
         // set username
         local_name = username;
         init(null, port);
@@ -12,24 +11,38 @@ public class Server extends Chat{
     @Override
     protected void init(String addr, int port) throws Exception
     {
+            System.out.println("Server opened...");
         // setup server socket, and listen for connections
             server = new ServerSocket(port);
             server.setSoTimeout(SOCKET_TIMEOUT_MS); // 60 seconds read timeout
             socket = server.accept();
             socket.setSoTimeout(SOCKET_TIMEOUT_MS); // 60 seconds read timeout
 
-            // Set up streams first
-            initialize_streams();
+            System.out.println("Incoming request from " + socket.getInetAddress());
+            System.out.print("Accept? (y/n): ");
+            String input = sc.nextLine();
 
-            // Exchange usernames
-            send(local_name);
-            peer_name = receive();
+            switch (input)
+            {
+                case "y": case "Y":
+                    // Set up streams first
+                    initialize_streams();
 
-            // initialize logs
-            initialize_logs();
+                    // Exchange usernames
+                    send(local_name);
+                    peer_name = receive();
 
-            // Notify connection
-            clear_terminal();
-            display_msg_history();
+                    // initialize logs
+                    initialize_logs();
+
+                    // Notify connection
+                    clear_terminal();
+                    display_msg_history();
+                    break;
+                case "n":case "N": default:
+                    socket.close();
+                    server.close();
+                    init(addr, port);
+            }
     }
 }
