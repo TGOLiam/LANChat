@@ -1,71 +1,59 @@
-# 🗨️ Half-Duplex LAN Chat Application
+Here’s a clean README format for your LAN Chat application, sir:
+
+---
+
+# 🗨️ LAN Chat Application
 
 ## 📘 Overview
-A console-based Java application that demonstrates **half-duplex communication** between two devices over a LAN.  
-In this model, both sides can send and receive messages, but **only one side communicates at a time**.  
-The project showcases basic **socket programming**, **message logging**, and **chat history management**.
+
+A console-based Java application that enables two devices on the same LAN to exchange messages in real time.
+Supports direct IP connections, message logging, and a menu-driven interface for session management and username customization. Designed for simplicity and reliability in controlled LAN environments.
 
 ---
 
 ## 🧩 Features
-- Half-duplex message exchange between Server and Client  
-- Console-based interface  
-- Message logging and history (loads up to 10 latest messages)  
-- Beep notifications for new messages  
-- Retry and reconnection options  
-- Username customization  
+
+* Direct LAN communication between two devices
+* Two-way messaging
+* Automatic loading of recent message history
+* Username customization
+* Connection retry options
 
 ---
 
-## 🧱 Class Overview
+## 🖥️ Usage
 
-### **Message**
-Stores individual chat message details:
-- Username  
-- Message content  
-- Date sent  
+### **Start Server**
 
-### **Chat (Abstract Class)**
-Base class for both Client and Server, responsible for:
-- Managing message history  
-- Handling socket I/O streams  
-- Sending and receiving messages  
-- Logging messages  
-- Generating timestamps  
+* Listens for incoming connections on a predefined port.
+* Displays incoming messages and allows sending replies.
 
-### **Client**
-Handles the client-side connection.  
-- Connects to server via IP address and port  
-- Sends user input  
-- Waits and receives replies from the server  
+### **Connect as Client**
 
-### **Server**
-Handles the server-side session.  
-- Waits for client connection  
-- Receives client messages  
-- Displays and sends responses  
+* Prompts for the server’s IP address.
+* Initiates connection and allows two-way messaging.
 
-### **ChatApp**
-Menu-driven console interface that allows:
-- Starting as Server  
-- Connecting as Client  
-- Editing username  
-- Retrying connections  
+### **Change Username**
+
+* Updates the current username.
+* Displayed to peers during chat sessions.
+
+### **Exit**
+
+* Closes the application cleanly.
 
 ---
 
-## ⚙️ Technologies Used
-- **Java Sockets** (`Socket`, `ServerSocket`)  
-- **I/O Streams** (`DataInputStream`, `DataOutputStream`, `BufferedInputStream`)  
-- **File Handling** (`FileReader`, `FileWriter`)  
-- **Date and Time** (`java.util.Date`)  
-- **Sound Notification** (`Toolkit.getDefaultToolkit().beep()`)
+## ⚙️ Requirements
+
+* Java 8 or higher
+* LAN connection between devices
 
 ---
 
 ## 📚 References
-- [Socket Programming in Java – GeeksforGeeks](https://www.geeksforgeeks.org/java/socket-programming-in-java/)  
-- [Java Date Class – W3Schools](https://www.w3schools.com/java/java_date.asp)  
-- [Make a Beep Sound in Java – Programmer Abroad](https://programmerabroad.com/make-a-beep-sound-in-java/)
+
+* [Java Socket Programming – GeeksforGeeks](https://www.geeksforgeeks.org/java/socket-programming-in-java/)
+* [Java Date Class – W3Schools](https://www.w3schools.com/java/java_date.asp)
 
 ---
