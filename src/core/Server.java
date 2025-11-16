@@ -18,16 +18,16 @@ public class Server extends Chat{
             server.bind(new InetSocketAddress(port));
             server.setSoTimeout(SOCKET_TIMEOUT_MS); // 60 seconds read timeout
 
-            socket = server.accept();
-            socket.setSoTimeout(SOCKET_TIMEOUT_MS); // 60 seconds read timeout
-
-            System.out.println("Incoming request from " + socket.getInetAddress());
-            System.out.print("Accept? (y/n): ");
-            String input = sc.nextLine();
-
-            switch (input)
+            while(true)
             {
-                case "y": case "Y":
+                socket = server.accept();
+                socket.setSoTimeout(SOCKET_TIMEOUT_MS); // 60 seconds read timeout
+
+                System.out.println("Incoming request from " + socket.getInetAddress());
+                System.out.print("Accept? (y/n): ");
+                String input = sc.nextLine();
+
+                if(input.equalsIgnoreCase("y")){
                     // Set up streams first
                     initialize_streams();
 
@@ -42,10 +42,8 @@ public class Server extends Chat{
                     clear_terminal();
                     display_msg_history();
                     break;
-                case "n":case "N": default:
-                    socket.close();
-                    server.close();
-                    init(addr, port);
+                }
+                else socket.close();
             }
     }
 }

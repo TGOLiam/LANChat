@@ -42,7 +42,7 @@ public class ChatApp {
                     chat = new Server(username, PORT);
                     chat.start();
                 } catch (Exception e) {
-                    System.err.println("Session cant start: " + e.getMessage());
+                    System.err.println("Session terminated: " + e.getMessage());
                 }
                 finally{
                     if (chat != null) chat.terminate();
@@ -55,7 +55,7 @@ public class ChatApp {
                     chat = new Client(username, ip, PORT);
                     chat.start();
                 } catch (Exception e) {
-                    System.err.println("Session cant start: " + e.getMessage());
+                    System.err.println("Session terminated: " + e.getMessage());
                 }
                 finally{
                     if (chat != null) chat.terminate();
