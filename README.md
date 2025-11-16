@@ -1,7 +1,3 @@
-Here’s a clean README format for your LAN Chat application, sir:
-
----
-
 # 🗨️ LAN Chat Application
 
 ## 📘 Overview
