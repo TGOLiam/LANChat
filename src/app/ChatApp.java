@@ -39,19 +39,26 @@ public class ChatApp {
             String ip = null;
             if(choice == 1){
                 try{
-                    run(new Server(username, PORT));
+                    chat = new Server(username, PORT);
+                    chat.start();
                 } catch (Exception e) {
                     System.err.println("Session cant start: " + e.getMessage());
+                }
+                finally{
+                    chat.terminate();
                 }
             }
             else if (choice == 2){
                 System.out.print("Enter computer's address: ");
                 ip = sc.nextLine();
                 try{
-                    run(new Client(username, ip, PORT));
-                }
-                catch (Exception e){
+                    chat = new Client(username, ip, PORT);
+                    chat.start();
+                } catch (Exception e) {
                     System.err.println("Session cant start: " + e.getMessage());
+                }
+                finally{
+                    chat.terminate();
                 }
             }
             else if (choice == 3){
@@ -65,17 +72,6 @@ public class ChatApp {
                 return;
             }
             else System.out.println("Invalid choice. Try again.");
-        }
-    }
-    private static void run(Chat chat){
-        try{
-            chat.start();
-        }
-        catch (Exception e ) {
-            System.err.println("Session terminated: " + e.getMessage());
-        }
-        finally {
-            if (chat != null) chat.terminate();
         }
     }
 }
