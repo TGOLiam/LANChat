@@ -45,7 +45,7 @@ public class ChatApp {
                     System.err.println("Session cant start: " + e.getMessage());
                 }
                 finally{
-                    chat.terminate();
+                    if (chat != null) chat.terminate();
                 }
             }
             else if (choice == 2){
@@ -58,7 +58,7 @@ public class ChatApp {
                     System.err.println("Session cant start: " + e.getMessage());
                 }
                 finally{
-                    chat.terminate();
+                    if (chat != null) chat.terminate();
                 }
             }
             else if (choice == 3){
