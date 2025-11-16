@@ -21,7 +21,7 @@ public class Server extends Chat{
             while(true)
             {
                 socket = server.accept();
-                socket.setSoTimeout(SOCKET_TIMEOUT_MS); // 60 seconds read timeout
+                socket.setSoTimeout(SOCKET_TIMEOUT_MS * 3); // 3 minutes read timeout
 
                 System.out.println("Incoming request from " + socket.getInetAddress());
                 System.out.print("Accept? (y/n): ");

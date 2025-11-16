@@ -24,7 +24,7 @@ public class Client extends Chat{
                 Thread.sleep(3000);
             }
         }
-        socket.setSoTimeout(SOCKET_TIMEOUT_MS); // 60 seconds read timeout
+        socket.setSoTimeout(SOCKET_TIMEOUT_MS * 3); // 3 minutes read timeout
 
         // Set up streams first
         initialize_streams();
