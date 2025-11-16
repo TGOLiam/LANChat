@@ -13,8 +13,11 @@ public class Server extends Chat{
     {
             System.out.println("Server opened...");
         // setup server socket, and listen for connections
-            server = new ServerSocket(port);
+            server = new ServerSocket();
+            server.setReuseAddress(true);
+            server.bind(new InetSocketAddress(port));
             server.setSoTimeout(SOCKET_TIMEOUT_MS); // 60 seconds read timeout
+
             socket = server.accept();
             socket.setSoTimeout(SOCKET_TIMEOUT_MS); // 60 seconds read timeout
 
